@@ -1,9 +1,12 @@
 import express from "express";
-import productController from "../controllers/productController.js";
+import ProductController from "../controllers/productController.js";
 
 const router = express.Router();
 
-router.get("/", productController.getProducts);
-router.post("/", productController.createProduct);
+// GET-запрос для получения списка всех товаров
+router.get("/", ProductController.getProducts);
 
-export default router;
+// POST-запрос для создания нового товара
+router.post("/", ProductController.createProduct);
+
+export default router; // Экспортируем маршруты для подключения в сервере
