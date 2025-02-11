@@ -6,7 +6,6 @@ class TokenService {
   generateTokens(payload) {
     const accessToken = jwt.sign(payload, process.env.JWT_ACCESS_SECRET, { expiresIn: "15m" });
     const refreshToken = jwt.sign(payload, process.env.JWT_REFRESH_SECRET, { expiresIn: "30d" });
-
     return { accessToken, refreshToken };
   }
 
@@ -20,25 +19,25 @@ class TokenService {
     return await Token.create({ user: userId, refreshToken });
   }
 
-  // Проверка access-токена
+  // Валидация access-токена
   validateAccessToken(token) {
     try {
       return jwt.verify(token, process.env.JWT_ACCESS_SECRET);
-    } catch {
+    } catch (error) {
       return null;
     }
   }
 
-  // Проверка refresh-токена
+  // Валидация refresh-токена
   validateRefreshToken(token) {
     try {
       return jwt.verify(token, process.env.JWT_REFRESH_SECRET);
-    } catch {
+    } catch (error) {
       return null;
     }
   }
 
-  // Удаление refresh-токена
+  // Удаление refresh-токена из БД (например, при выходе пользователя)
   async removeToken(refreshToken) {
     return await Token.deleteOne({ refreshToken });
   }

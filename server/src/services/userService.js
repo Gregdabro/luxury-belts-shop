@@ -1,47 +1,60 @@
-import bcrypt from "bcryptjs"; // Для хеширования паролей
-import jwt from "jsonwebtoken"; // Для генерации JWT-токенов
+import bcrypt from "bcryptjs";
 import User from "../models/User.js";
+import tokenService from "./tokenService.js";
+import UserDto from "../dtos/userDto.js";
 
-// Класс UserService для работы с пользователями
 class UserService {
-  // Регистрация нового пользователя
   async register(userData) {
     const { name, email, password, role } = userData;
 
-    // Проверяем, есть ли уже такой email в базе
     const existingUser = await User.findOne({ email });
     if (existingUser) throw new Error("Email уже зарегистрирован");
 
-    // Хешируем пароль перед сохранением
     const hashedPassword = await bcrypt.hash(password, 10);
+    const user = await User.create({ name, email, password: hashedPassword, role: role || "user" });
 
-    // Создаём нового пользователя
-    const user = new User({ name, email, password: hashedPassword, role: role || "user" });
-    await user.save();
+    // Создаём DTO, чтобы не возвращать лишние данные
+    const userDto = new UserDto(user);
+    
+    // Генерируем токены
+    const tokens = tokenService.generateTokens({ ...userDto });
+    await tokenService.saveToken(userDto.id, tokens.refreshToken);
 
-    return user;
+    return { ...tokens, user: userDto };
   }
 
-  // Авторизация пользователя
   async login(email, password) {
-    // Проверяем, существует ли пользователь с таким email
     const user = await User.findOne({ email });
     if (!user) throw new Error("Неверный email или пароль");
 
-    // Проверяем совпадает ли пароль
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) throw new Error("Неверный email или пароль");
 
-    // Генерируем JWT-токен
-    const token = jwt.sign(
-      { userId: user._id, role: user.role }, // Включаем в токен userId и role
-      process.env.JWT_SECRET, // Секретный ключ из .env
-      { expiresIn: "7d" } // Токен действует 7 дней
-    );
+    const userDto = new UserDto(user);
+    const tokens = tokenService.generateTokens({ ...userDto });
+    await tokenService.saveToken(userDto.id, tokens.refreshToken);
 
-    return { token, user };
+    return { ...tokens, user: userDto };
+  }
+
+  async logout(refreshToken) {
+    return await tokenService.removeToken(refreshToken);
+  }
+
+  async refresh(refreshToken) {
+    if (!refreshToken) throw new Error("Токен отсутствует");
+
+    const tokenData = tokenService.validateRefreshToken(refreshToken);
+    const storedToken = await tokenService.findToken(refreshToken);
+    if (!tokenData || !storedToken) throw new Error("Неверный токен");
+
+    const user = await User.findById(tokenData.id);
+    const userDto = new UserDto(user);
+    const tokens = tokenService.generateTokens({ ...userDto });
+    await tokenService.saveToken(userDto.id, tokens.refreshToken);
+
+    return { ...tokens, user: userDto };
   }
 }
 
-// Экспортируем экземпляр класса
 export default new UserService();

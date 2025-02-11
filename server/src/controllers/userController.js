@@ -1,27 +1,57 @@
 import userService from "../services/userService.js";
 
-// Класс UserController для обработки запросов
 class UserController {
-  // Регистрация пользователя
   async register(req, res) {
     try {
-      const user = await userService.register(req.body);
-      res.status(201).json({ message: "Пользователь зарегистрирован", user });
+      const userData = await userService.register(req.body);
+      res.cookie("refreshToken", userData.refreshToken, {
+        httpOnly: true,
+        secure: true,
+        sameSite: "strict",
+      });
+      res.status(201).json(userData);
     } catch (error) {
       res.status(400).json({ error: error.message });
     }
   }
 
-  // Авторизация пользователя
   async login(req, res) {
     try {
-      const { token, user } = await userService.login(req.body.email, req.body.password);
-      res.json({ token, user });
+      const userData = await userService.login(req.body.email, req.body.password);
+      res.cookie("refreshToken", userData.refreshToken, {
+        httpOnly: true,
+        secure: true,
+        sameSite: "strict",
+      });
+      res.json(userData);
     } catch (error) {
       res.status(400).json({ error: error.message });
+    }
+  }
+
+  async logout(req, res) {
+    try {
+      await userService.logout(req.cookies.refreshToken);
+      res.clearCookie("refreshToken");
+      res.json({ message: "Вы успешно вышли" });
+    } catch (error) {
+      res.status(400).json({ error: error.message });
+    }
+  }
+
+  async refresh(req, res) {
+    try {
+      const userData = await userService.refresh(req.cookies.refreshToken);
+      res.cookie("refreshToken", userData.refreshToken, {
+        httpOnly: true,
+        secure: true,
+        sameSite: "strict",
+      });
+      res.json(userData);
+    } catch (error) {
+      res.status(401).json({ error: error.message });
     }
   }
 }
 
-// Экспортируем экземпляр класса
 export default new UserController();
