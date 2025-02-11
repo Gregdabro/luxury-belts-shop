@@ -1,16 +1,24 @@
-import express from "express";
-import cors from "cors";
-import dotenv from "dotenv";
-import { connectDB } from "./config/db.js";
-import productRoutes from "./routes/productRoutes.js";
+import express from "express"; // Импортируем Express для создания сервера
+import cors from "cors"; // Импортируем CORS для работы с междоменными запросами
+import dotenv from "dotenv"; // Импортируем dotenv для работы с переменными окружения
+import connectDB from "./config/db.js"; // Импортируем функцию для подключения к базе данных
+import productRoutes from "./routes/productRoutes.js"; // Импортируем маршруты для работы с товарами
+import userRoutes from "./routes/userRoutes.js"; // Импортируем маршруты для работы с пользователями
 
-dotenv.config();
-const app = express();
-const PORT = process.env.PORT || 5000;
+dotenv.config(); // Загружаем переменные окружения из файла .env
+const app = express(); // Создаём новый экземпляр Express-приложения
+const PORT = process.env.PORT || 5000; // Читаем порт из .env или используем 5000 по умолчанию
 
-connectDB();
+connectDB(); // Подключаемся к базе данных
 
-app.use(cors());
-app.use(express.json());
+app.use(cors()); // Включаем поддержку CORS для всех маршрутов
+app.use(express.json()); // Разрешаем обработку JSON в запросах
+
+// Устанавливаем маршрут для товаров
 app.use("/api/products", productRoutes);
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+
+// Устанавливаем маршрут для пользователей
+app.use("/api/users", userRoutes);
+
+
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`)); // Запускаем сервер и слушаем указанный порт

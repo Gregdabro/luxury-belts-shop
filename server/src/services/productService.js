@@ -1,4 +1,4 @@
-import { Product } from "../models/Product.js";
+import Product from "../models/Product.js";
 
 class ProductService {
   // Метод для получения всех товаров из базы данных
