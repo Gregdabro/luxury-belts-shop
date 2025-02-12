@@ -55,6 +55,11 @@ class UserService {
 
     return { ...tokens, user: userDto };
   }
+
+  async getAll() {
+    const users = await User.find();
+    return users.map((user) => new UserDto(user));
+  }
 }
 
 export default new UserService();

@@ -53,6 +53,15 @@ class UserController {
       res.status(401).json({ error: error.message });
     }
   }
+
+  async getAll(req, res) {
+    try {
+      const users = await userService.getAll();
+      res.json(users);
+    } catch (error) {
+      res.status(401).json({ error: error.message });
+    }
+  }
 }
 
 export default new UserController();
