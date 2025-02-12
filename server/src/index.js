@@ -4,6 +4,7 @@ import dotenv from "dotenv"; // Импортируем dotenv для работ�
 import connectDB from "./config/db.js"; // Импортируем функцию для подключения к базе данных
 import productRoutes from "./routes/productRoutes.js"; // Импортируем маршруты для работы с товарами
 import userRoutes from "./routes/userRoutes.js"; // Импортируем маршруты для работы с пользователями
+import cookieParser from "cookie-parser"; // Импортируем cookie-parser для работы с куками
 
 dotenv.config(); // Загружаем переменные окружения из файла .env
 const app = express(); // Создаём новый экземпляр Express-приложения
@@ -13,6 +14,7 @@ connectDB(); // Подключаемся к базе данных
 
 app.use(cors()); // Включаем поддержку CORS для всех маршрутов
 app.use(express.json()); // Разрешаем обработку JSON в запросах
+app.use(cookieParser()); // Подключаем middleware для работы с куками
 
 // Устанавливаем маршрут для товаров
 app.use("/api/products", productRoutes);
