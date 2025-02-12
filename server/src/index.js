@@ -5,6 +5,7 @@ import connectDB from "./config/db.js"; // Импортируем функцию
 import productRoutes from "./routes/productRoutes.js"; // Импортируем маршруты для работы с товарами
 import userRoutes from "./routes/userRoutes.js"; // Импортируем маршруты для работы с пользователями
 import cookieParser from "cookie-parser"; // Импортируем cookie-parser для работы с куками
+import errorMiddleware from "./middleware/errorMiddleware.js"; // Импортируем middleware для обработки ошибок
 
 dotenv.config(); // Загружаем переменные окружения из файла .env
 const app = express(); // Создаём новый экземпляр Express-приложения
@@ -22,5 +23,7 @@ app.use("/api/products", productRoutes);
 // Устанавливаем маршрут для пользователей
 app.use("/api/users", userRoutes);
 
+// Устанавливаем обработчик ошибок
+app.use(errorMiddleware);
 
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`)); // Запускаем сервер и слушаем указанный порт

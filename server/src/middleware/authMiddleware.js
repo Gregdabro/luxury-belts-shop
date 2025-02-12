@@ -1,27 +1,33 @@
 import jwt from "jsonwebtoken";
 import User from "../models/User.js";
+import ApiError from "../exceptions/apiError.js";
+import tokenService from "../services/tokenService.js";
 
 // Middleware для проверки токена и получения пользователя
-export const authMiddleware = async (req, res, next) => {
+export default function authMiddleware(req, res, next) {
   try {
     // Получаем токен из заголовков запроса
-    const token = req.headers.authorization?.split(" ")[1]; // "Bearer TOKEN"
+    const authorizationHeader = req.headers.authorization?.split(" ")[1]; // "Bearer TOKEN"
 
-    if (!token) {
-      return res.status(401).json({ message: "Нет доступа, авторизуйтесь" });
+    if (!authorizationHeader) {
+      return next(ApiError.unauthorized());
     }
 
     // Проверяем токен
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-
-    // Ищем пользователя в базе данных
-    req.user = await User.findById(decoded.userId).select("-password"); // Исключаем пароль
-    if (!req.user) {
-      return res.status(401).json({ message: "Пользователь не найден" });
+    const accessToken = authorizationHeader.split(" ")[1];
+    if (!accessToken) {
+      return next(ApiError.unauthorized());
     }
 
+    // Ищем пользователя в базе данных
+    const userData = tokenService.validateAccessToken(accessToken);
+    if (!userData) {
+      return next(ApiError.unauthorized());
+    }
+
+    req.user = userData;
     next(); // Передаём управление следующему middleware
   } catch (error) {
-    res.status(401).json({ message: "Неверный токен" });
+    return next(ApiError.unauthorized());
   }
 };
