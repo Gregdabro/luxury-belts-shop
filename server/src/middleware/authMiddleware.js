@@ -7,7 +7,7 @@ import tokenService from "../services/tokenService.js";
 export default function authMiddleware(req, res, next) {
   try {
     // Получаем токен из заголовков запроса
-    const authorizationHeader = req.headers.authorization?.split(" ")[1]; // "Bearer TOKEN"
+    const authorizationHeader = req.headers.authorization; // "Bearer TOKEN"
 
     if (!authorizationHeader) {
       return next(ApiError.unauthorized());
@@ -15,6 +15,7 @@ export default function authMiddleware(req, res, next) {
 
     // Проверяем токен
     const accessToken = authorizationHeader.split(" ")[1];
+
     if (!accessToken) {
       return next(ApiError.unauthorized());
     }
