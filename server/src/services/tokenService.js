@@ -34,7 +34,7 @@ class TokenService {
     try {
       return jwt.verify(token, process.env.JWT_ACCESS_SECRET);
     } catch (error) {
-      throw ApiError.unauthorized("Некорректный или просроченный access-токен");
+      return null;
     }
   }
 
@@ -43,7 +43,7 @@ class TokenService {
     try {
       return jwt.verify(token, process.env.JWT_REFRESH_SECRET);
     } catch (error) {
-      throw ApiError.unauthorized("Неверный токен");
+      return null;
     }
   }
 

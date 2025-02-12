@@ -1,5 +1,7 @@
 import express from "express";
 import ProductController from "../controllers/productController.js";
+import authMiddleware from "../middleware/authMiddleware.js";
+import roleMiddleware from "../middleware/roleMiddleware.js";
 
 const router = express.Router();
 
@@ -7,6 +9,6 @@ const router = express.Router();
 router.get("/", ProductController.getProducts);
 
 // POST-запрос для создания нового товара
-router.post("/", ProductController.createProduct);
+router.post("/", authMiddleware, roleMiddleware(["admin"]), ProductController.createProduct);
 
 export default router; // Экспортируем маршруты для подключения в сервере
