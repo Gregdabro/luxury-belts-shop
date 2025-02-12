@@ -1,34 +1,33 @@
-import jwt from "jsonwebtoken";
-import User from "../models/User.js";
-import ApiError from "../exceptions/apiError.js";
 import tokenService from "../services/tokenService.js";
+import ApiError from "../exceptions/apiError.js";
 
-// Middleware для проверки токена и получения пользователя
 export default function authMiddleware(req, res, next) {
   try {
-    // Получаем токен из заголовков запроса
-    const authorizationHeader = req.headers.authorization; // "Bearer TOKEN"
+    const authHeader = req.headers.authorization;
 
-    if (!authorizationHeader) {
-      return next(ApiError.unauthorized());
+    // Проверяем, есть ли заголовок Authorization
+    if (!authHeader) {
+      throw ApiError.unauthorized("Токен отсутствует");
     }
 
-    // Проверяем токен
-    const accessToken = authorizationHeader.split(" ")[1];
-
-    if (!accessToken) {
-      return next(ApiError.unauthorized());
+    // Проверяем, начинается ли заголовок с "Bearer "
+    const parts = authHeader.split(" ");
+    if (parts.length !== 2 || parts[0] !== "Bearer") {
+      throw ApiError.unauthorized("Некорректный формат токена");
     }
 
-    // Ищем пользователя в базе данных
+    const accessToken = parts[1];
+
+    // Валидация access-токена
     const userData = tokenService.validateAccessToken(accessToken);
     if (!userData) {
-      return next(ApiError.unauthorized());
+      throw ApiError.unauthorized("Неверный или просроченный токен");
     }
 
+    // Записываем данные пользователя в req.user и передаем управление дальше
     req.user = userData;
-    next(); // Передаём управление следующему middleware
+    next();
   } catch (error) {
-    return next(ApiError.unauthorized());
+    next(error);
   }
-};
+}
