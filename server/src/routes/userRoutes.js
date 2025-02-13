@@ -10,5 +10,6 @@ router.post("/register", userController.register);
 // Маршрут для авторизации
 router.post("/login", userController.login);
 router.get("/", authMiddleware, userController.getAll);
+router.get("/auth/activate/:link", userController.activate);
 
 export default router;

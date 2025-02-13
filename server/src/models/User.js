@@ -6,6 +6,8 @@ const UserSchema = new mongoose.Schema({
   email: { type: String, required: true, unique: true }, // Email (уникальный)
   password: { type: String, required: true }, // Хешированный пароль
   role: { type: String, enum: ["user", "admin"], default: "user" }, // Роль пользователя
+  isActivated: { type: Boolean, default: false }, // Флаг активации
+  activationLink: { type: String }, // Уникальная ссылка на активацию
 }, { timestamps: true }); // timestamps автоматически добавит createdAt и updatedAt
 
 // Создаём модель User

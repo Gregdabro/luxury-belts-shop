@@ -3,6 +3,7 @@ import User from "../models/User.js";
 import tokenService from "./tokenService.js";
 import UserDto from "../dtos/userDto.js";
 import ApiError from "../exceptions/apiError.js";
+import activationService from "./activationService.js";
 
 class UserService {
   async register(userData) {
@@ -13,10 +14,13 @@ class UserService {
     if (existingUser) throw ApiError.badRequest("Email уже зарегистрирован");
 
     // Хешируем пароль
-    const hashedPassword = await bcrypt.hash(password, 10);
+    const hashedPassword = await bcrypt.hash(password, 7);
+
 
     // Создаём нового пользователя
     const user = await User.create({ name, email, password: hashedPassword, role: role || "user" });
+
+    await activationService.sendActivationLink(email);
 
     // Создаём DTO, чтобы не возвращать лишние данные
     const userDto = new UserDto(user);

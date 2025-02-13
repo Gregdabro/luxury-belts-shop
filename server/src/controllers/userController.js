@@ -1,4 +1,6 @@
 import userService from "../services/userService.js";
+import activationService from "../services/activationService.js";
+import ApiError from "../exceptions/apiError.js";
 
 class UserController {
   async register(req, res) {
@@ -51,6 +53,20 @@ class UserController {
       res.json(userData);
     } catch (error) {
       res.status(401).json({ error: error.message });
+    }
+  }
+
+  async activate(req, res, next) {
+    try {
+      const { link } = req.params;
+      if (!link) {
+        throw ApiError.badRequest("Некорректный запрос. Отсутствует ссылка активации");
+      }
+
+      await activationService.activateAccount(link);
+      return res.redirect(process.env.CLIENT_URL);
+    } catch (error) {
+      next(error);
     }
   }
 
