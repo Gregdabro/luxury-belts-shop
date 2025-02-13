@@ -4,7 +4,7 @@ import dotenv from "dotenv"; // Импортируем dotenv для работ�
 dotenv.config(); // Загружаем переменные окружения из файла .env
 
 // Функция для подключения к базе данных MongoDB
-export default async () => {
+const connectDB = async () => {
   try {
     // Пытаемся подключиться к базе данных с использованием строки подключения из переменной окружения
     await mongoose.connect(process.env.MONGO_URI);
@@ -14,3 +14,5 @@ export default async () => {
     process.exit(1); // Завершаем процесс с кодом 1 (ошибка), чтобы сервер не продолжал работать без подключения к БД
   }
 };
+
+export default connectDB;

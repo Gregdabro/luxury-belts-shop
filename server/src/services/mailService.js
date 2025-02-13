@@ -1,3 +1,4 @@
+// server/src/services/mailService.js
 import nodemailer from "nodemailer";
 
 class MailService {
