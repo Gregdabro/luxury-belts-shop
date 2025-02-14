@@ -1,25 +1,24 @@
 import ProductService from "../services/productService.js";
+import ApiError from "../exceptions/apiError.js";
 
 class ProductController {
-  // Метод для обработки запроса на получение всех товаров
-  async getProducts(req, res) {
-    try {
-      const products = await ProductService.getProducts(); // Вызываем сервисный метод
-      res.json(products); // Отправляем клиенту список товаров
-    } catch (error) {
-      res.status(500).json({ error: error.message }); // В случае ошибки отправляем статус 500
+    async getProducts(req, res, next) {
+        try {
+            const products = await ProductService.getProducts();
+            res.json(products);
+        } catch (error) {
+            next(ApiError.internal(error.message));
+        }
     }
-  }
 
-  // Метод для обработки запроса на создание нового товара
-  async createProduct(req, res) {
-    try {
-      const product = await ProductService.createProduct(req.body); // Передаём данные товара в сервис
-      res.status(201).json(product); // Отправляем клиенту созданный товар
-    } catch (error) {
-      res.status(500).json({ error: error.message }); // В случае ошибки отправляем статус 500
+    async createProduct(req, res, next) {
+        try {
+            const product = await ProductService.createProduct(req.body);
+            res.status(201).json(product);
+        } catch (error) {
+            next(ApiError.badRequest(error.message));
+        }
     }
-  }
 }
 
-export default new ProductController(); // Экспортируем экземпляр класса для использования в маршрутах
+export default new ProductController();

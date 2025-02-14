@@ -1,7 +1,9 @@
 import userService from "../services/userService.js";
+import activationService from "../services/activationService.js";
+import ApiError from "../exceptions/apiError.js";
 
 class UserController {
-  async register(req, res) {
+  async register(req, res, next) {
     try {
       const userData = await userService.register(req.body);
       res.cookie("refreshToken", userData.refreshToken, {
@@ -12,11 +14,11 @@ class UserController {
       });
       res.status(201).json(userData);
     } catch (error) {
-      res.status(400).json({ error: error.message });
+      next(error);
     }
   }
 
-  async login(req, res) {
+  async login(req, res, next) {
     try {
       const userData = await userService.login(req.body.email, req.body.password);
       res.cookie("refreshToken", userData.refreshToken, {
@@ -26,23 +28,31 @@ class UserController {
       });
       res.json(userData);
     } catch (error) {
-      res.status(400).json({ error: error.message });
+      next(error);
     }
   }
 
-  async logout(req, res) {
+  async logout(req, res, next) {
     try {
-      await userService.logout(req.cookies.refreshToken);
+      const { refreshToken } = req.cookies;
+      if (!refreshToken) {
+        throw ApiError.unauthorized('Пользователь не авторизован');
+      }
+      await userService.logout(refreshToken);
       res.clearCookie("refreshToken");
       res.json({ message: "Вы успешно вышли" });
     } catch (error) {
-      res.status(400).json({ error: error.message });
+      next(error);
     }
   }
 
-  async refresh(req, res) {
+  async refresh(req, res, next) {
     try {
-      const userData = await userService.refresh(req.cookies.refreshToken);
+      const { refreshToken } = req.cookies;
+      if (!refreshToken) {
+        throw ApiError.unauthorized('Пользователь не авторизован');
+      }
+      const userData = await userService.refresh(refreshToken);
       res.cookie("refreshToken", userData.refreshToken, {
         httpOnly: true,
         secure: true,
@@ -50,16 +60,30 @@ class UserController {
       });
       res.json(userData);
     } catch (error) {
-      res.status(401).json({ error: error.message });
+      next(error);
     }
   }
 
-  async getAll(req, res) {
+  async activate(req, res, next) {
+    try {
+      const { link } = req.params;
+      if (!link) {
+        throw ApiError.badRequest("Некорректный запрос. Отсутствует ссылка активации");
+      }
+
+      await activationService.activateAccount(link);
+      return res.redirect(process.env.CLIENT_URL);
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async getAll(req, res, next) {
     try {
       const users = await userService.getAll();
       res.json(users);
     } catch (error) {
-      res.status(401).json({ error: error.message });
+      next(error);
     }
   }
 }
