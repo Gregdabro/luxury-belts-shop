@@ -9,7 +9,7 @@ class UserController {
       res.cookie("refreshToken", userData.refreshToken, {
         maxAge: 30 * 24 * 60 * 60 * 1000,
         httpOnly: true,
-        secure: true,
+        secure: false, // для разработки, изменить на true при продакшене
         sameSite: "strict",
       });
       res.status(201).json(userData);
@@ -22,8 +22,8 @@ class UserController {
     try {
       const userData = await userService.login(req.body.email, req.body.password);
       res.cookie("refreshToken", userData.refreshToken, {
-        httpOnly: true,
-        secure: true,
+        httpOnly: true, 
+        secure: false, // для разработки, изменить на true при продакшене
         sameSite: "strict",
       });
       res.json(userData);
@@ -55,7 +55,7 @@ class UserController {
       const userData = await userService.refresh(refreshToken);
       res.cookie("refreshToken", userData.refreshToken, {
         httpOnly: true,
-        secure: true,
+        secure: false, // для разработки, изменить на true при продакшене
         sameSite: "strict",
       });
       res.json(userData);

@@ -41,7 +41,7 @@ class UserService {
     return await tokenService.removeToken(refreshToken);
   }
   async refresh(refreshToken) {
-    if (!refreshToken) throw ApiError.badRequest("Токен отсутствует");
+    if (!refreshToken) throw ApiError.badRequest("Токен отсутствует"); //заменить на unauthorized
     // Проверяем валидность токена
     const tokenData = tokenService.validateRefreshToken(refreshToken);
     const storedToken = await tokenService.findToken(refreshToken);
