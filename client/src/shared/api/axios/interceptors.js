@@ -1,5 +1,5 @@
 import { axiosInstance } from './instance'
-import { STORAGE_TOKEN_KEY } from '@/shared/config/api.config'
+import { STORAGE_TOKEN_KEY, AUTH_ENDPOINTS } from '@/shared/config/api.config'
 
 export const setupInterceptors = () => {
     axiosInstance.interceptors.request.use(
@@ -24,8 +24,7 @@ export const setupInterceptors = () => {
                 originalRequest._retry = true
 
                 try {
-                    // Попытка обновить токен
-                    const response = await axiosInstance.post('/auth/refresh', {}, {
+                    const response = await axiosInstance.get(AUTH_ENDPOINTS.REFRESH, {
                         withCredentials: true
                     })
                     
@@ -35,9 +34,8 @@ export const setupInterceptors = () => {
                     originalRequest.headers.Authorization = `Bearer ${newToken}`
                     return axiosInstance(originalRequest)
                 } catch (refreshError) {
-                    // Если не удалось обновить токен, очищаем хранилище
                     localStorage.removeItem(STORAGE_TOKEN_KEY)
-                    // Можно добавить редирект на страницу входа
+                    window.location.href = '/auth'
                     return Promise.reject(refreshError)
                 }
             }

@@ -39,7 +39,7 @@ class ActivationService {
         throw ApiError.badRequest('Аккаунт уже активирован');
       }
 
-      const activationUrl = `${process.env.API_URL}/api/users/auth/activate/${activationLink}`;
+      const activationUrl = `${process.env.API_URL}/api/auth/activate/${activationLink}`;
       
       await mailService.sendActivationMail(email, activationUrl);
       
