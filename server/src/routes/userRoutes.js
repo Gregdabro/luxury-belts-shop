@@ -1,13 +1,14 @@
 import express from "express";
 import userController from "../controllers/userController.js";
 import authMiddleware from "../middleware/authMiddleware.js";
+import { registerValidation, loginValidation } from "../middleware/validationMiddleware.js";
 
 const router = express.Router();
 
 // Маршрут для регистрации
-router.post("/register", userController.register);
+router.post("/register", registerValidation, userController.register);
 // Маршрут для авторизации
-router.post("/login", userController.login);
+router.post("/login", loginValidation, userController.login);
 // Маршрут для выхода
 router.post("/logout", userController.logout);
 // Маршрут для обновления токена
