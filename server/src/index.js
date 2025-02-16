@@ -1,4 +1,4 @@
-import express from "express"; // Импортируем Express для создания сервера
+import express from "express"; // Импорт Express для создания сервера
 import cors from "cors"; // Импортируем CORS для работы с междоменными запросами
 import dotenv from "dotenv"; // Импортируем dotenv для работы с переменными окружения
 import connectDB from "./config/db.js"; // Импортируем функцию для подключения к базе данных
