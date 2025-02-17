@@ -1,11 +1,11 @@
-import userService from "../services/userService.js";
+import authService from "../services/authService.js";
 import activationService from "../services/activationService.js";
 import ApiError from "../exceptions/apiError.js";
 
-class UserController {
+class AuthController {
   async register(req, res, next) {
     try {
-      const userData = await userService.register(req.body);
+      const userData = await authService.register(req.body);
       res.cookie("refreshToken", userData.refreshToken, {
         maxAge: 30 * 24 * 60 * 60 * 1000,
         httpOnly: true,
@@ -20,7 +20,7 @@ class UserController {
 
   async login(req, res, next) {
     try {
-      const userData = await userService.login(req.body.email, req.body.password);
+      const userData = await authService.login(req.body.email, req.body.password);
       res.cookie("refreshToken", userData.refreshToken, {
         httpOnly: true, 
         secure: false, // для разработки, изменить на true при продакшене
@@ -38,7 +38,7 @@ class UserController {
       if (!refreshToken) {
         throw ApiError.unauthorized('Пользователь не авторизован');
       }
-      await userService.logout(refreshToken);
+      await authService.logout(refreshToken);
       res.clearCookie("refreshToken");
       res.json({ message: "Вы успешно вышли" });
     } catch (error) {
@@ -52,7 +52,7 @@ class UserController {
       if (!refreshToken) {
         throw ApiError.unauthorized('Пользователь не авторизован');
       }
-      const userData = await userService.refresh(refreshToken);
+      const userData = await authService.refresh(refreshToken); 
       res.cookie("refreshToken", userData.refreshToken, {
         httpOnly: true,
         secure: false, // для разработки, изменить на true при продакшене
@@ -77,15 +77,6 @@ class UserController {
       next(error);
     }
   }
-
-  async getAll(req, res, next) {
-    try {
-      const users = await userService.getAll();
-      res.json(users);
-    } catch (error) {
-      next(error);
-    }
-  }
 }
 
-export default new UserController();
+export default new AuthController();

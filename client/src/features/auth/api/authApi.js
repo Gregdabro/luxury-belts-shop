@@ -2,9 +2,8 @@ import { axiosInstance } from '@/shared/api'
 import { AUTH_ENDPOINTS } from '@/shared/config/api.config'
 
 export const AuthService = {
-    async login(name, email, password) {
+    async login(email, password) {
         const response = await axiosInstance.post(AUTH_ENDPOINTS.LOGIN, {
-            name,
             email,
             password
         })

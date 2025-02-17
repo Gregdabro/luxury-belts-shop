@@ -1,6 +1,5 @@
 import express from "express";
 import authController from "../controllers/authController.js";
-import authMiddleware from "../middleware/authMiddleware.js";
 import { registerValidation, loginValidation } from "../middleware/validationMiddleware.js";
 
 const router = express.Router();
@@ -13,8 +12,6 @@ router.post("/login", loginValidation, authController.login);
 router.post("/logout", authController.logout);
 // Маршрут для обновления токена
 router.get("/refresh", authController.refresh);
-// Маршрут для получения списка пользователей
-router.get("/", authMiddleware, authController.getAll);
 // Маршрут для активации аккаунта
 router.get("/activate/:link", authController.activate);
 
