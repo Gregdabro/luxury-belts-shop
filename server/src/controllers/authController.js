@@ -14,7 +14,7 @@ class AuthController {
       });
       res.status(201).json(userData);
     } catch (error) {
-      next(error);
+      next(error instanceof ApiError ? error : ApiError.internal(error.message));
     }
   }
 
@@ -28,7 +28,7 @@ class AuthController {
       });
       res.json(userData);
     } catch (error) {
-      next(error);
+      next(error instanceof ApiError ? error : ApiError.internal(error.message));
     }
   }
 
@@ -36,13 +36,13 @@ class AuthController {
     try {
       const { refreshToken } = req.cookies;
       if (!refreshToken) {
-        throw ApiError.unauthorized('Пользователь не авторизован');
+        next(error instanceof ApiError ? error : ApiError.internal(error.message));
       }
       await authService.logout(refreshToken);
       res.clearCookie("refreshToken");
       res.json({ message: "Вы успешно вышли" });
     } catch (error) {
-      next(error);
+      next(error instanceof ApiError ? error : ApiError.internal(error.message));
     }
   }
 
@@ -50,7 +50,7 @@ class AuthController {
     try {
       const { refreshToken } = req.cookies;
       if (!refreshToken) {
-        throw ApiError.unauthorized('Пользователь не авторизован');
+        next(error instanceof ApiError ? error : ApiError.internal(error.message));
       }
       const userData = await authService.refresh(refreshToken); 
       res.cookie("refreshToken", userData.refreshToken, {
@@ -60,7 +60,7 @@ class AuthController {
       });
       res.json(userData);
     } catch (error) {
-      next(error);
+      next(error instanceof ApiError ? error : ApiError.internal(error.message));
     }
   }
 
@@ -74,7 +74,7 @@ class AuthController {
       await activationService.activateAccount(link);
       return res.redirect(process.env.CLIENT_URL);
     } catch (error) {
-      next(error);
+      next(error instanceof ApiError ? error : ApiError.internal(error.message));
     }
   }
 }

@@ -1,7 +1,4 @@
 import mongoose from "mongoose"; // Импортируем Mongoose для подключения к базе данных
-import dotenv from "dotenv"; // Импортируем dotenv для работы с переменными окружения
-
-dotenv.config(); // Загружаем переменные окружения из файла .env
 
 // Функция для подключения к базе данных MongoDB
 const connectDB = async () => {

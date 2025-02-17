@@ -1,7 +1,8 @@
 import User from "../models/User.js";
-import mailService from "./mailService.js";
 import { v4 as uuidv4 } from "uuid";
 import ApiError from "../exceptions/apiError.js";
+import mailService from "./mailService.js";
+
 
 class ActivationService {
   async sendActivationLink(email) {

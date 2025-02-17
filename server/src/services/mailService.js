@@ -1,4 +1,6 @@
 // server/src/services/mailService.js
+import "../config/config.js";
+
 import nodemailer from "nodemailer";
 import ApiError from "../exceptions/apiError.js";
 
