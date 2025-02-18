@@ -16,8 +16,9 @@ export const setupInterceptors = () => {
     )
 
     axiosInstance.interceptors.response.use(
-        (response) => response,
-        async (error) => {
+        (config) => {
+            return config
+        }, async (error) => {
             const originalRequest = error.config
 
             if (error.response.status === 401 && !originalRequest._retry) {
@@ -33,10 +34,11 @@ export const setupInterceptors = () => {
                     
                     originalRequest.headers.Authorization = `Bearer ${newToken}`
                     return axiosInstance(originalRequest)
-                } catch (refreshError) {
+                } catch (error) {
+                    console.log("Refresh token failed", error)
                     localStorage.removeItem(STORAGE_TOKEN_KEY)
                     window.location.href = '/auth'
-                    return Promise.reject(refreshError)
+                    return Promise.reject(error)
                 }
             }
             return Promise.reject(error)

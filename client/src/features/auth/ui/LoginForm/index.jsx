@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useUserStore } from '@/entities/user'
-import { AuthService } from '../../api/authApi'
+import { AuthService } from '../../api/authService'
 import styles from './LoginForm.module.scss'
 
 export const LoginForm = () => {
@@ -16,6 +16,7 @@ export const LoginForm = () => {
 
         try {
             const data = await AuthService.login(email, password)
+            console.log("data", data)
             login(data)
         } catch (err) {
             setError(err.response?.data?.message || 'Ошибка авторизации')

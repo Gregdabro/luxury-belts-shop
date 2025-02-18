@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useUserStore } from '@/entities/user'
-import { AuthService } from '../../api/authApi'
+import { AuthService } from '../../api/authService'
 import styles from './RegisterForm.module.scss'
 
 export const RegisterForm = () => {

@@ -1,4 +1,4 @@
-import "./config/config.js";
+import "./config/loadEnv.js";
 import express from "express"; // Импорт Express для создания сервера
 import cors from "cors"; // Импортируем CORS для работы с междоменными запросами
 import connectDB from "./config/db.js"; // Импортируем функцию для подключения к базе данных
