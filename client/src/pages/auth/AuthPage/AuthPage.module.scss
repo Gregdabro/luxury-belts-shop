@@ -1,0 +1,38 @@
+.container {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #f3f4f6;
+}
+
+.formWrapper {
+    width: 100%;
+    max-width: 440px;
+    margin: 2rem;
+}
+
+.toggle {
+    margin-top: 1rem;
+    text-align: center;
+    color: #4b5563;
+    font-size: 0.875rem;
+
+    p {
+        margin: 0;
+    }
+}
+
+.toggleButton {
+    background: none;
+    border: none;
+    color: #6366f1;
+    font-weight: 500;
+    cursor: pointer;
+    padding: 0 0.25rem;
+    margin-left: 0.25rem;
+
+    &:hover {
+        text-decoration: underline;
+    }
+}

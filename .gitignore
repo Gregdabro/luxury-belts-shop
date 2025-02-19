@@ -1,0 +1,24 @@
+# Общие игнорируемые файлы
+node_modules/
+.env
+logs/
+*.log
+dist/
+build/
+
+# Для frontend (client)
+client/node_modules/
+client/dist/
+client/.env.local
+
+# Для backend (server)
+server/node_modules/
+server/.env
+server/logs/
+server/*.log
+
+# IDE и кэш
+.vscode/
+.idea/
+*.sublime-workspace
+.DS_Store
